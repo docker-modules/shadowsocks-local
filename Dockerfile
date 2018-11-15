@@ -37,8 +37,8 @@ ENV METHOD      aes-256-gcm
 ENV PASSWORD	123456
 ENV TIMEOUT     300
 
-EXPOSE $1080/tcp
-EXPOSE $1080/udp
+EXPOSE 1080/tcp
+EXPOSE 1080/udp
 
 CMD exec ss-local \
     -s $SERVER \
