@@ -9,6 +9,7 @@ RUN set -ex \
     autoconf \
     automake \
     build-base \
+    openssl \
     c-ares-dev \
     libev-dev \
     libtool \
@@ -16,13 +17,23 @@ RUN set -ex \
     linux-headers \
     mbedtls-dev \
     pcre-dev \
+    # polipo
+    && wget https://github.com/jech/polipo/archive/master.zip -O polipo.zip \
+    && unzip polipo.zip \
+    && cd polipo-master \
+    && make \
+    && install polipo /usr/local/bin/ \
+    && cd .. \
+    && rm -rf polipo.zip polipo-master \
+    && mkdir -p /usr/share/polipo/www /var/cache/polipo \
+    # shadowsocks
     && cd /tmp \
     && wget -O shadowsocks-libev.tar.gz $SHADOWSOCKS_LIBEV_RELEASE_URL && mkdir shadowsocks-libev \
     && tar -xvf shadowsocks-libev.tar.gz -C shadowsocks-libev --strip-components 1 \
     && cd shadowsocks-libev \
     && ./configure --prefix=/usr --disable-documentation \
     && make install \
-    && apk del .build-deps \
+    && apk del .build-deps build-base openssl \
     # Runtime dependencies setup
     && apk add --no-cache \
     rng-tools \
@@ -37,8 +48,7 @@ ENV METHOD      aes-256-gcm
 ENV PASSWORD	123456
 ENV TIMEOUT     300
 
-EXPOSE 1080/tcp
-EXPOSE 1080/udp
+EXPOSE 80/tcp
 
 CMD exec ss-local \
     -s $SERVER \
@@ -49,4 +59,9 @@ CMD exec ss-local \
     -b 0.0.0.0 \
     -l 1080 \
     -u \
-    --fast-open
+    --fast-open \
+    && exec polipo \
+    proxyAddress="0.0.0.0" \
+    proxyPort=80 \
+    socksProxyType=socks5 \
+    socksParentProxy=127.0.0.1:1080
