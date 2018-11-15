@@ -46,6 +46,7 @@ CMD exec ss-local \
     -m $METHOD \
     -k $PASSWORD \
     -t $TIMEOUT \
+    -b 0.0.0.0 \
     -l 1080 \
     -u \
     --fast-open
