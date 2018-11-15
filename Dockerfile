@@ -17,6 +17,7 @@ RUN set -ex \
     linux-headers \
     mbedtls-dev \
     pcre-dev \
+    && cd /tmp \
     # polipo
     && wget https://github.com/jech/polipo/archive/master.zip -O polipo.zip \
     && unzip polipo.zip \
@@ -27,7 +28,6 @@ RUN set -ex \
     && rm -rf polipo.zip polipo-master \
     && mkdir -p /usr/share/polipo/www /var/cache/polipo \
     # shadowsocks
-    && cd /tmp \
     && wget -O shadowsocks-libev.tar.gz $SHADOWSOCKS_LIBEV_RELEASE_URL && mkdir shadowsocks-libev \
     && tar -xvf shadowsocks-libev.tar.gz -C shadowsocks-libev --strip-components 1 \
     && cd shadowsocks-libev \
@@ -50,7 +50,7 @@ ENV TIMEOUT     300
 
 EXPOSE 80/tcp
 
-CMD exec ss-local \
+CMD nohup ss-local \
     -s $SERVER \
     -p $PORT \
     -m $METHOD \
@@ -59,9 +59,9 @@ CMD exec ss-local \
     -b 0.0.0.0 \
     -l 1080 \
     -u \
-    --fast-open \
-    && exec polipo \
+    --fast-open& \
+    && nohup polipo \
     proxyAddress="0.0.0.0" \
     proxyPort=80 \
     socksProxyType=socks5 \
-    socksParentProxy=127.0.0.1:1080
+    socksParentProxy=127.0.0.1:1080&
