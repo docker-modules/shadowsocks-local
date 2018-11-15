@@ -50,18 +50,4 @@ ENV TIMEOUT     300
 
 EXPOSE 80/tcp
 
-CMD nohup ss-local \
-    -s $SERVER \
-    -p $PORT \
-    -m $METHOD \
-    -k $PASSWORD \
-    -t $TIMEOUT \
-    -b 0.0.0.0 \
-    -l 1080 \
-    -u \
-    --fast-open& \
-    && nohup polipo \
-    proxyAddress="0.0.0.0" \
-    proxyPort=80 \
-    socksProxyType=socks5 \
-    socksParentProxy=127.0.0.1:1080&
+CMD nohup sh -c "ss-local -s $SERVER -p $PORT -m $METHOD -k $PASSWORD -t $TIMEOUT -b 0.0.0.0 -l 1080 -u --fast-open && nohup polipo proxyAddress=0.0.0.0 proxyPort=80 socksProxyType=socks5 socksParentProxy=127.0.0.1:1080"&
