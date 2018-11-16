@@ -48,6 +48,8 @@ ENV METHOD      aes-256-gcm
 ENV PASSWORD	123456
 ENV TIMEOUT     300
 
-EXPOSE 80/tcp
+COPY entrypoint.sh /usr/local/bin/
 
-CMD nohup sh -c "ss-local -s $SERVER -p $PORT -m $METHOD -k $PASSWORD -t $TIMEOUT -b 0.0.0.0 -l 1080 -u --fast-open && nohup polipo proxyAddress=0.0.0.0 proxyPort=80 socksProxyType=socks5 socksParentProxy=127.0.0.1:1080"&
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]

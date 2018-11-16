@@ -13,5 +13,5 @@ TIMEOUT     300
 ## run
 
 ```sh
-docker run --restart=always -itd -p 1080:1080 -p 1080:1080/udp -e "SERVER=1.1.1.1" -e "PASSWORD=123456" modules/shadowsocks-local
+docker run --restart=always -itd -p 1080:1080 -e "SERVER=1.1.1.1" -e "PASSWORD=123456" modules/shadowsocks-local
 ```
